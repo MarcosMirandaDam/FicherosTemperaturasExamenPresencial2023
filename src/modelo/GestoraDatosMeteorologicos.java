@@ -125,31 +125,22 @@ public class GestoraDatosMeteorologicos {
      * @return
      */
     public String mostrarTemperaturaMinima() {
-        String datos = "";
-        String dia = "";
-        String ciudadMinima = null;
-        int tempMinimaAbsoluta;
-        for (int i = 0; i < listaDatosMeteorologicos.size(); i++) {
-            List<Integer> minimas = new ArrayList<Integer>();
-            minimas.add(listaDatosMeteorologicos.get(i).getTemperaturaMin());
-            tempMinimaAbsoluta = Collections.min(minimas);
-            datos = String.valueOf(tempMinimaAbsoluta);
-            dia = listaDatosMeteorologicos.get(i).getDia();
-            ciudadMinima = listaDatosMeteorologicos.get(i).getCiudad();
-        }
-
-        return "" + datos + dia + ciudadMinima;
+        String resultado="";
+        DatosMeteorologicos datos=Collections.min(listaDatosMeteorologicos, Comparator.comparing(s->s.getTemperaturaMin()));
+        resultado+=+datos.getTemperaturaMin()+" grados " + " el dia "+datos.getDia()+ " en la ciudad de "+datos.getCiudad();
+        return resultado;
     }
+
 
     /**
      * -Retornar un Hashmap con la media de la temperatura de cada ciudad.
      *
      * @return
      */
-    public Map<Integer, String> temperaturasMediasCiudades() {
-        Map<Integer, String> mapTemperaturasMediasCiudades = new HashMap<>();
+    public Map<String, Integer> temperaturasMediasCiudades() {
+        Map<String, Integer> mapTemperaturasMediasCiudades = new HashMap<>();
         for (DatosMeteorologicos dato : listaDatosMeteorologicos) {
-            mapTemperaturasMediasCiudades.put(dato.getTemperaturaMedia(), dato.getCiudad());
+            mapTemperaturasMediasCiudades.put(dato.getCiudad(), dato.getTemperaturaMedia());
         }
         return mapTemperaturasMediasCiudades;
 
@@ -164,9 +155,8 @@ public class GestoraDatosMeteorologicos {
     public boolean crearCSV(String nombreCiudad) throws IOException{
         String CiudadDatos="";
         String nombreArchivo = "datosCiudad.csv";
-        BufferedWriter bw = null;
-        try {
-           ArrayList<DatosMeteorologicos>listaDatosMeteorologicos = new ArrayList<>(); 
+        
+           
            Map<String, List<String>> hashmapCiudadDatosMetereologicos = new HashMap<>();
            List<String> listaDatos=new ArrayList<>();
             for (DatosMeteorologicos dato : listaDatosMeteorologicos) {
@@ -174,23 +164,18 @@ public class GestoraDatosMeteorologicos {
                 listaDatos.add(String.valueOf(dato.getTemperaturaMin()));
                 listaDatos.add(String.valueOf(dato.getTemperaturaMax()));
                 listaDatos.add(String.valueOf(dato.getTemperaturaMedia()));
-                hashmapCiudadDatosMetereologicos.put(dato.getCiudad(), listaDatos);
+                hashmapCiudadDatosMetereologicos.put(nombreCiudad, listaDatos);
             }
-             bw = new BufferedWriter(new FileWriter(nombreArchivo));
+            
             for (Map.Entry<String, List<String>> entry : hashmapCiudadDatosMetereologicos.entrySet()) {
                 Object key = entry.getKey();
                 Object value = entry.getValue();
                 CiudadDatos=key + ":" + value + "\n";
-                bw.write(CiudadDatos);
-
-            }
-        } catch (IOException ex) {
-
-        } finally {
-            try {
-                bw.close();
-            } catch (IOException iOException) {
-            }
+              
+               FileWriter fw=new FileWriter(nombreArchivo);
+               fw.write(CiudadDatos);
+               fw.close();
+               
         }
 
         return true;
@@ -213,17 +198,13 @@ public class GestoraDatosMeteorologicos {
     
     public boolean eliminarRegistrosMesDeseado(String diaBorrar) {
        boolean borrado=false;
-        for (DatosMeteorologicos dato : listaDatosMeteorologicos) {
-            if(dato.getDia().equalsIgnoreCase(diaBorrar)){
-                for (Iterator<DatosMeteorologicos> iterator = listaDatosMeteorologicos.iterator(); iterator.hasNext();) {
-                    DatosMeteorologicos next = iterator.next();
-                    iterator.remove();
-                    borrado=true;
-                }
+        for (Iterator<DatosMeteorologicos> iterator = listaDatosMeteorologicos.iterator(); iterator.hasNext();) {
+            DatosMeteorologicos next = iterator.next();
+            if(next.getCiudad().equalsIgnoreCase(diaBorrar)){
+                iterator.remove();
+                borrado=true;
             }
         }
         return borrado;
- 
-       
 }
 }

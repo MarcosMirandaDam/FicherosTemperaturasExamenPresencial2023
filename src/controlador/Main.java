@@ -23,16 +23,9 @@ public class Main {
         
         System.out.println(picazo.leerFichero(ficheroTxt));
         System.out.println(picazo.aniadirDatosLista(ficheroTxt));
-        System.out.println(picazo.mostrarTemperaturaMinima());
-        System.out.println(picazo.temperaturasMediasCiudades());
-        boolean registroBorrado=picazo.eliminarRegistrosMesDeseado("1/3/22");
-        if(registroBorrado){
-            System.out.println("borrado con exito");
-        } else{
-            System.out.println("no se ha borrado");
-        } 
-            
-        
+        System.out.println("Temperatura minima , dia y ciudad:"+picazo.mostrarTemperaturaMinima());
+        System.out.println("Temperaturas medias" +picazo.temperaturasMediasCiudades());
+        System.out.println(picazo.eliminarRegistrosMesDeseado("oviedo"));       
         System.out.println(picazo.crearCSV("Oviedo"));       
         System.out.println(picazo.mostrarContenidoLista());
         
